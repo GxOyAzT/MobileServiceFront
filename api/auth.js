@@ -42,7 +42,6 @@ export async function checkToken(token){
       isSuccess: true
     }
   }
-
   return {
     isSuccess: false
   }
@@ -51,7 +50,6 @@ export async function checkToken(token){
 export async function getSavedToken(){
   try{
     const value = await AsyncStorage.getItem('login_token')
-    console.log(`getSavedToken() : ${value}`)
     return value
   }
   catch (e){

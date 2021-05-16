@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { FlatList, StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, Modal } from 'react-native'
 import CollectionListItemComp from './CollectionListItemComp'
 import { getCollectionsAsync } from '../api/collection'
+import CreateCollectionComp from './CreateCollectionComp'
 
 export class CollectionListComp extends Component {
 
@@ -10,15 +11,28 @@ export class CollectionListComp extends Component {
 
     this.state = {
       data: null,
-      modalVisible: false
+      modalVisible: false,
+      setPanelDisplay: props.setPanelDisplay,
+      showInformationPopup: props.showInformationPopup
     }
   }
 
-  async componentDidMount(){
-    var data = await getCollectionsAsync()
-    this.setState({
-      data: data
-    })
+  componentDidMount(){
+    this.reloadData()
+  }
+
+  reloadData = async () => {
+    var response = await getCollectionsAsync()
+
+    if (response.statusCode === 200){
+      this.setState({
+        data: response.content
+      })
+    }
+    else {
+      this.state.showInformationPopup('WARNING', 'CANNOT DO SOMETHING...')
+    }
+    
   }
 
   showModalCreateNew = () => {
@@ -37,17 +51,13 @@ export class CollectionListComp extends Component {
     return (
       <View style={styles.mainContainer}>
         <Modal animationType="slide" transparent={true} visible={this.state.modalVisible} style={styles.createNewPanel}>
-          <View style={styles.mainContainer, {backgroundColor: 'red', height: 200, width: '90%', marginHorizontal: '5%', marginTop: 50}}>
-            <TouchableOpacity style={styles.createNewButton} onPress={this.hideModalCreateNew}>
-              <Text style={{fontSize: 25, color: 'white', textAlign: 'center'}}>Create Folder</Text>
-            </TouchableOpacity>
-          </View>
+          <CreateCollectionComp hideModalCreateNew={this.hideModalCreateNew} reloadData={this.reloadData}/>
         </Modal>
         {this.state.data === null ? <ActivityIndicator style={{flex: 1}}/> :
-        <FlatList style={styles.flatList} data={this.state.data} renderItem={({item}) => (<CollectionListItemComp data={item}/>)} keyExtractor={item => item.id} />}
+        <FlatList style={styles.flatList} data={this.state.data} renderItem={({item}) => (<CollectionListItemComp setPanelDisplay={this.state.setPanelDisplay} data={item}/>)} keyExtractor={item => item.id} />}
         <View style={styles.bottomContainer}>
           <TouchableOpacity style={styles.createNewButton} onPress={this.showModalCreateNew}>
-            <Text style={{fontSize: 25, color: 'white', textAlign: 'center'}}>Create Folder</Text>
+            <Text style={{color: 'white', textAlign: 'center'}}>CREATE FOLDER</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -60,14 +70,13 @@ export default CollectionListComp
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // flexDirection: 'column',
     justifyContent: 'center',
     alignContent: 'center'
   },
 
   flatList: {
     flex: 1,
-    paddingHorizontal: 3,
+    paddingHorizontal: 10,
     paddingVertical: 5
   },
 
@@ -84,12 +93,11 @@ const styles = StyleSheet.create({
   },
 
   createNewButton: {
-    flex: 1,
-    backgroundColor: 'green',
-    margin: 5,
-    borderRadius: 10,
-    alignContent: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#609D37',
+    marginHorizontal: 5,
+    borderRadius: 100,
+    paddingVertical: 10,
+    marginBottom: 10
   },
 
   createNewPanel: {
