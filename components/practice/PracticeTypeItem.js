@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, TextInput } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { PracticeProgressButtons } from './PracticeProgressButtons'
 
 export class PracticeTypeItem extends Component {
@@ -51,23 +51,25 @@ export class PracticeTypeItem extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <KeyboardAvoidingView>
-          <View style={this.state.isFlashcardChecked === false ? styles.falshcard : this.state.isAnswerCorrect ? styles.falshcardCorrectAns : styles.falshcardIncorrectAns}>
-            {this.state.isFlashcardChecked ? <View style={{flex: 1, justifyContent: 'center'}}><Text style={ this.state.isFlashcardChecked === false ? styles.falshcardText : [styles.falshcardText, {color: '#fff'}]}>{this.state.userInput}</Text></View> : <TextInput autoCapitalize='none' autoCorrect={false} placeholder={'Type answer here'} value={this.state.userInput} multiline={true} style={styles.textInput} onChangeText={text => this.onChangeUserInput(text)}/>}
-            <Text style={[styles.falshcardInfo, {color: '#1e1e1e'}]}>back</Text>
-          </View> 
-        </KeyboardAvoidingView>
-        <View style={{height: 10}}></View>
-        {this.state.isFlashcardChecked ? <PracticeProgressButtons nextFlashcard={this.state.nextFlashcard} flashcard={this.state.flashcard}/> : <></>}
-        <View style={{height: 10}}></View>
-        <TouchableOpacity style={styles.falshcard} onPress={this.onPressFlashcard}>
-          <View style={{flex: 1, justifyContent: 'center'}}>
-            <Text style={styles.falshcardText}>{this.state.flashcardText}</Text>
+        <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
+            <KeyboardAvoidingView>
+              <View style={this.state.isFlashcardChecked === false ? styles.falshcard : this.state.isAnswerCorrect ? styles.falshcardCorrectAns : styles.falshcardIncorrectAns}>
+                {this.state.isFlashcardChecked ? <View style={{flex: 1, justifyContent: 'center'}}><Text style={ this.state.isFlashcardChecked === false ? styles.falshcardText : [styles.falshcardText, {color: '#fff'}]}>{this.state.userInput}</Text></View> : <TextInput autoCapitalize='none' autoCorrect={false} placeholder={'Type answer here'} value={this.state.userInput} multiline={true} style={styles.textInput} onChangeText={text => this.onChangeUserInput(text)}/>}
+                <Text style={[styles.falshcardInfo, {color: '#1e1e1e'}]}>back</Text>
+              </View> 
+            </KeyboardAvoidingView>
+            <View style={{height: 10}}></View>
+            {this.state.isFlashcardChecked ? <PracticeProgressButtons nextFlashcard={this.state.nextFlashcard} flashcard={this.state.flashcard}/> : <></>}
+            <View style={{height: 10}}></View>
+            <TouchableOpacity style={styles.falshcard} onPress={this.onPressFlashcard}>
+              <View style={{flex: 1, justifyContent: 'center'}}>
+                <Text style={styles.falshcardText}>{this.state.flashcardText}</Text>
+              </View>
+              <Text style={[styles.falshcardInfo, {color: '#1e1e1e'}]}>{this.state.isFlashcardChecked ? 'back' : 'front'}</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={[styles.falshcardInfo, {color: '#1e1e1e'}]}>{this.state.isFlashcardChecked ? 'back' : 'front'}</Text>
-        </TouchableOpacity>
-      </View>
+        </TouchableWithoutFeedback>
     )
   }
 }
